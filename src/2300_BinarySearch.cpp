@@ -1,8 +1,8 @@
 #include <iostream>
 #include <algorithm>
 #include <stdint.h>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
 
 using namespace std;
  
@@ -26,7 +26,7 @@ static bool binarySearch(int32_t* array, int n, int32_t search, int32_t* value) 
 			last = middle - 1;
 		}
 		middle = (first + last)/2;
-		if(middle%1000==0) Tracer::I()->meet(middle);
+		if(middle%128==0) Tracer::I()->meet(middle);
 	}
 	if (first > last) {
 		*value=array[middle];
@@ -88,10 +88,22 @@ void run_BinarySearch(uint8_t* seedIn, int seedSize) {
 
 #ifdef SELF_TEST
 int main() {
-	char hello[100]="aer39invqbj3to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
+	char hello[100]="ae90--i888f--r39invqbj43to;5j46354q3499@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_BinarySearch((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }

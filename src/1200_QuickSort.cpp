@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <iostream>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
  
 #define N (2*1024*1024)
 #define ITER_COUNT 2
@@ -38,7 +38,7 @@ int partition (T arr[], int low, int high)
         {
             i++;    // increment index of smaller element
             swap(&arr[i], &arr[j]);
-            if(arr[j].a%1000==0) Tracer::I()->meet(arr[j].v());
+            if(arr[j].a%128==0) Tracer::I()->meet(arr[j].v());
         }
     }
     swap(&arr[i + 1], &arr[high]);
@@ -99,7 +99,6 @@ void run_QuickSort(uint8_t* seedIn, int seedSize) {
 		mixArray<PairB>(arrB, N-1);
 		//for(int j=0; j<N; j++) printf("%d-%d: %016llx %016llx\n",i,j,arr[j].a,arr[j].b);
 	}
-	Tracer::I()->sha3_update((unsigned char*)arr, 1024);
 	delete[] arr;
 }
 
@@ -108,10 +107,22 @@ void run_QuickSort(uint8_t* seedIn, int seedSize) {
 
 #ifdef SELF_TEST
 int main() {
-	char hello[100]="aer39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
+	char hello[100]="ae--iif--r39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_QuickSort((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }

@@ -1,8 +1,9 @@
 #include <iostream>
 #include <iomanip>
 #include <stdint.h>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
+
 using namespace std;
 
 template <class type>
@@ -232,7 +233,7 @@ inline void BSTree<type>::remove(const type& a_data)
 //}
 
 void run_BinarySearchTree(uint8_t* seedIn, int seedSize) {
-	const int Count=8*1024*1024;
+	const int Count=7*1024*1024;
 	Pair* tmp=new Pair[Count/4];
 	fillPairArray(seedIn, seedSize, tmp, Count/4);
 	int16_t* arr=(int16_t*)tmp;
@@ -251,10 +252,22 @@ void run_BinarySearchTree(uint8_t* seedIn, int seedSize) {
 
 #ifdef SELF_TEST
 int main() {
-	char hello[100]="aer3invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
+	char hello[100]="ae90..i..8f--r39inviiiii,5j46354q3499@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_BinarySearchTree((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }

@@ -4,3 +4,7 @@
 *.o
 *.swp
 *.sh
+*.out
+*.log
+build/pow_tester
+build/top_tester

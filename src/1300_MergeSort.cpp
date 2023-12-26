@@ -2,11 +2,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
  
 
-#define N (1*1024*1024)
+#define N (1124*1024)
 #define ITER_COUNT 1
 //#define N 480
 //#define ITER_COUNT 4
@@ -23,7 +23,7 @@ using namespace std;
 template <typename Key>
 void swap(Key* xs, int i, int j) {
     Key tmp = xs[i]; xs[i] = xs[j]; xs[j] = tmp;
-    if(tmp.a%1000==0) Tracer::I()->meet(tmp.v());
+    if(tmp.a%128==0) Tracer::I()->meet(tmp.v());
 }
 
 template <typename Key>
@@ -120,7 +120,6 @@ void run_MergeSort(uint8_t* seedIn, int seedSize) {
 		imsort<PairB>(arrB, 0, N);
 		//for(int j=0; j<N; j++) printf("%d-%d: %016llx %016llx\n",i,j,arr[j].a,arr[j].b);
 	}
-	Tracer::I()->sha3_update((unsigned char*)arr, 1024);
 	delete[] arr;
 }
 
@@ -129,10 +128,22 @@ void run_MergeSort(uint8_t* seedIn, int seedSize) {
 
 #ifdef SELF_TEST
 int main() {
-	char hello[100]="aer39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
+	char hello[100]="ae--i99if--r39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_MergeSort((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }

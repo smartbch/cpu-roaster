@@ -1,12 +1,12 @@
-CXX=g++
+CXX=g++ -DNDEBUG
 
 all: cpu-roaster.o
 
 expandRand.o: ../src/ExpandRand/expandRand.cpp ../src/ExpandRand/blake2b-ref.c  ../src/ExpandRand/byte_order.c   ../src/ExpandRand/sha3.c
 	$(CXX) -O3 -o expandRand.o -c ../src/ExpandRand/expandRand.cpp
 
-0000_AlgoSet.o: ../src/0000_AlgoSet.cpp
-	$(CXX) -O3 -std=c++11 -o 0000_AlgoSet.o -c ../src/0000_AlgoSet.cpp
+0000_CpuRoaster.o: ../src/0000_CpuRoaster.cpp
+	$(CXX) -O3 -std=c++11 -o 0000_CpuRoaster.o -c ../src/0000_CpuRoaster.cpp
 
 1100_HeapSort.o: ../src/1100_HeapSort.cpp
 	$(CXX) -O3 -std=c++11 -o 1100_HeapSort.o -c ../src/1100_HeapSort.cpp
@@ -29,12 +29,6 @@ expandRand.o: ../src/ExpandRand/expandRand.cpp ../src/ExpandRand/blake2b-ref.c  
 2300_BinarySearch.o: ../src/2300_BinarySearch.cpp
 	$(CXX) -O3 -std=c++11 -o 2300_BinarySearch.o -c ../src/2300_BinarySearch.cpp
 
-2400_KthSmallest.o: ../src/2400_KthSmallest.cpp
-	$(CXX) -O3 -std=c++11 -o 2400_KthSmallest.o -c ../src/2400_KthSmallest.cpp
-
-2700_CuckooHash.o: ../src/2700_CuckooHash.cpp
-	$(CXX) -O3 -std=c++11 -o 2700_CuckooHash.o -c ../src/2700_CuckooHash.cpp
-
 2800_BloomFilter.o: ../src/2800_BloomFilter.cpp
 	$(CXX) -O3 -std=c++11 -o 2800_BloomFilter.o -c ../src/2800_BloomFilter.cpp
 
@@ -44,17 +38,17 @@ expandRand.o: ../src/ExpandRand/expandRand.cpp ../src/ExpandRand/blake2b-ref.c  
 3200_BinarySearchTree.o: ../src/3200_BinarySearchTree.cpp
 	$(CXX) -O3 -std=c++11 -o 3200_BinarySearchTree.o -c ../src/3200_BinarySearchTree.cpp
 
-3400_BTree.o: ../src/3400_BTree.cpp
-	$(CXX) -O3 -std=c++11 -o 3400_BTree.o -c ../src/3400_BTree.cpp
-
 3800_RedBlackTree.o: ../src/3800_RedBlackTree.cpp
 	$(CXX) -O3 -std=c++11 -o 3800_RedBlackTree.o -c ../src/3800_RedBlackTree.cpp
 
-3900_ReversePolishNotation.o: ../src/3900_ReversePolishNotation.cpp
-	$(CXX) -O3 -std=c++11 -o 3900_ReversePolishNotation.o -c ../src/3900_ReversePolishNotation.cpp
+cpu-roaster.o: expandRand.o 0000_CpuRoaster.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
+	$(CXX) -o cpu-roaster.o -c expandRand.o 0000_CpuRoaster.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
 
-cpu-roaster.o: expandRand.o 0000_AlgoSet.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2400_KthSmallest.o 2700_CuckooHash.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3400_BTree.o 3800_RedBlackTree.o 3900_ReversePolishNotation.o
-	$(CXX) -o cpu-roaster.o -c expandRand.o 0000_AlgoSet.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2400_KthSmallest.o 2700_CuckooHash.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3400_BTree.o 3800_RedBlackTree.o 3900_ReversePolishNotation.o
+top_tester: ../src/0000_CpuRoaster.cpp expandRand.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
+	g++ -DTOP_TESTER -O3 -std=c++11 -o top_tester ../src/0000_CpuRoaster.cpp expandRand.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
+
+pow_tester: ../src/0000_CpuRoaster.cpp expandRand.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
+	g++ -DPOW_TESTER -O3 -std=c++11 -o pow_tester ../src/0000_CpuRoaster.cpp expandRand.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
 
 .PHONY: clean
 

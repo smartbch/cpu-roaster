@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
 
 /**
 * Debugging macro .
@@ -145,7 +145,7 @@ void PQueue<T>::heapify(size_t idx) {
         tmp = this->data[lrg_idx];
         this->data[lrg_idx] = this->data[idx];
         this->data[idx] = tmp;
-	if(tmp%1000==0) Tracer::I()->meet(tmp);
+	if(tmp%128==0) Tracer::I()->meet(tmp);
         /* Heapify again */
         heapify(lrg_idx);
     }
@@ -199,10 +199,22 @@ void run_PrioQueue(uint8_t* seedIn, int seedSize) {
 
 #ifdef SELF_TEST
 int main() {
-	char hello[100]="aer39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
+	char hello[100]="ae90--i99if--r39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_PrioQueue((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }

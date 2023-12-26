@@ -8,8 +8,9 @@
 #include <limits>
 #include <string>
 #include <vector>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
+
 using namespace std;
 
 static const std::size_t bits_per_char = 0x08;    // 8 bits in 1 char(unsigned)
@@ -791,7 +792,7 @@ private:
 
 void run_BloomFilter(uint8_t* seedIn, int seedSize) {
 	bloom_parameters parameters;
-	const int Count=5*1024*1024;
+	const int Count=4500*1024;
 	parameters.projected_element_count = Count;
 	// Maximum tolerable false positive probability? (0,1)
 	parameters.false_positive_probability = 0.01;
@@ -828,10 +829,22 @@ void run_BloomFilter(uint8_t* seedIn, int seedSize) {
 
 #ifdef SELF_TEST
 int main() {
-	char hello[100]="aer39ivqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
+	char hello[100]="ae90..i..8f--r39invqbj43to;5j46354q3499@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_BloomFilter((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }

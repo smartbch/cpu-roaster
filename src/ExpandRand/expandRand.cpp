@@ -18,16 +18,16 @@ void expandRand64KB(uint8_t* seed, int seedSize, uint8_t* out) {
 	memset(tempBuf, 0, BufSize);
 	sha3_ctx ctx;
 	// init the first 32 bytes
-	rhash_sha3_512_init(&ctx);
+	rhash_sha3_256_init(&ctx);
 	rhash_sha3_update(&ctx, seed, seedSize);
 	rhash_sha3_final(&ctx, tempBuf);
 	// init the second 32 bytes
-	rhash_sha3_512_init(&ctx);
+	rhash_sha3_256_init(&ctx);
 	rhash_sha3_update(&ctx, tempBuf, 32);
 	rhash_sha3_final(&ctx, tempBuf+32);
 	for(int start=64; start<BufSize; start+=32) {
 		// use 64-byte old data to generate the next 32-byte data
-		rhash_sha3_512_init(&ctx);
+		rhash_sha3_256_init(&ctx);
 		rhash_sha3_update(&ctx, tempBuf+start-64, 64);
 		rhash_sha3_final(&ctx, tempBuf+start);
 	}
@@ -51,14 +51,14 @@ void expandRand4KB(uint8_t* in, int inSize, uint8_t* out) {
 	const int bufSize=8*128;
 	uint8_t* tempBuf=(uint8_t*)malloc(8*128+128);
 	sha3_ctx ctx;
-	rhash_sha3_512_init(&ctx);
+	rhash_sha3_256_init(&ctx);
 	rhash_sha3_update(&ctx, in, inSize);
 	rhash_sha3_final(&ctx, tempBuf);
-	rhash_sha3_512_init(&ctx);
+	rhash_sha3_256_init(&ctx);
 	rhash_sha3_update(&ctx, tempBuf, 32);
 	rhash_sha3_final(&ctx, tempBuf+32);
 	for(int start=64; start<bufSize; start+=32) {
-		rhash_sha3_512_init(&ctx);
+		rhash_sha3_256_init(&ctx);
 		rhash_sha3_update(&ctx, tempBuf+start-64, 64);
 		rhash_sha3_final(&ctx, tempBuf+start);
 	}

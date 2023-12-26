@@ -2,10 +2,10 @@
 #include <assert.h>
 #include <stdint.h>
 #include <string.h>
-#include "util.h"
-#include "Tracer.h"
+#include "include/util.h"
+#include "include/tracer.h"
  
-#define N (2*1124*1024)
+#define N (2*1024*1024)
 #define ITER_COUNT 1
 //#define N 480
 //#define ITER_COUNT 4
@@ -32,7 +32,7 @@ static void maxHeapify(T a[], int i, int n)
 		else if (temp <= a[j])
 		{
 			a[j/2] = a[j];
-			if(a[j].a%1000==0) Tracer::I()->meet(a[j].v());
+			if(a[j].a%128==0) Tracer::I()->meet(a[j].v());
 			j = 2*j;
 		}
 	}
@@ -85,7 +85,6 @@ void run_HeapSort(uint8_t* seedIn, int seedSize) {
 		heapSort<PairB>(arrB, N);
 		//for(int j=0; j<N; j++) printf("%d-%d: %016llx %016llx\n",i,j,arr[j].a,arr[j].b);
 	}
-	Tracer::I()->sha3_update((unsigned char*)arr, 1024);
 	free(arr);
 }
 
@@ -96,8 +95,20 @@ void run_HeapSort(uint8_t* seedIn, int seedSize) {
 int main() {
 	char hello[100]="aer39invqbj43to;5j46354q34534999!@#%@#$%^&$&ADGSGWREF";
 	int len=strlen(hello);
+	uint64_t firstRes[4];
+	uint64_t otherRes[4];
 	for(int i=0; i<50; i++) {
+		Tracer::I()->clear();
 		run_HeapSort((uint8_t*)hello,len);
+		if(i==0) {
+			Tracer::I()->final_result((unsigned char*)firstRes);
+		} else {
+			Tracer::I()->final_result((unsigned char*)otherRes);
+			for(int i=0; i<4; i++) {
+				//printf("H %016llx %016llx\n", firstRes[i], otherRes[i]);
+				assert(firstRes[i]==otherRes[i]);
+			}
+		}
 	}
 	return 0;
 }
