@@ -16,8 +16,68 @@ void run_SuffixArray(uint8_t* seedIn, int seedSize);
 void run_BinarySearchTree(uint8_t* seedIn, int seedSize);
 void run_RedBlackTree(uint8_t* seedIn, int seedSize);
 
-extern "C" int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t d6, uint32_t d7, const uint64_t difficulty, const int64_t nonce_start, const int64_t nonce_step);
-extern "C" void cpu_roaster_hash(uint8_t *data, size_t length, unsigned char *hash);
+// extern "C" int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t d6, uint32_t d7, const uint64_t difficulty, const int64_t nonce_start, const int64_t nonce_step);
+// extern "C" void cpu_roaster_hash(uint8_t *data, size_t length, unsigned char *hash);
+
+extern "C" {
+
+void cpu_roaster_hash(uint8_t *data, size_t length, unsigned char *hash) {
+	Tracer::I()->clear();
+	for(int i=0; i<length-8; i+=8) {
+		uint64_t* d=(uint64_t*)(data+i);
+		Tracer::I()->meet(*d);
+	}
+	uint8_t buf[64];
+	for(int counter=0; counter<4; counter++) {
+		uint8_t* seedIn;
+		int seedSize;
+		if(counter==0) {
+			seedSize=length;
+			seedIn=data;
+		}
+		else {
+			seedSize=64;
+			seedIn=buf;
+			memcpy(seedIn,Tracer::I()->fnvHistory,64);
+		}
+		switch(Tracer::I()->historyCksum()%11) {
+			case 0:
+			run_HeapSort(seedIn, seedSize);
+			break;
+			case 1:
+			run_QuickSort(seedIn, seedSize);
+			break;
+			case 2:
+			run_MergeSort(seedIn, seedSize); 
+			break;
+			case 3:
+			run_PrioQueue(seedIn, seedSize);
+			break;
+			case 4:
+			run_FibonacciHeap(seedIn, seedSize);
+			break;
+			case 5:
+			run_Kruskal(seedIn, seedSize);
+			break;
+			case 6:
+			run_BinarySearch(seedIn, seedSize);
+			break;
+			case 7:
+			run_BloomFilter(seedIn, seedSize);
+			break;
+			case 8:
+			run_SuffixArray(seedIn, seedSize);
+			break;
+			case 9:
+			run_BinarySearchTree(seedIn, seedSize);
+			break;
+			default:
+			run_RedBlackTree(seedIn, seedSize);
+			break;
+		}
+	}
+	Tracer::I()->final_result(hash);
+}
 
 int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t d6, uint32_t d7, const uint64_t difficulty, const int64_t nonce_start, const int64_t nonce_step) {
 	uint8_t data[40];
@@ -81,63 +141,7 @@ int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint
 	return nonce;
 }
 
-void cpu_roaster_hash(uint8_t *data, size_t length, unsigned char *hash) {
-	Tracer::I()->clear();
-	for(int i=0; i<length-8; i+=8) {
-		uint64_t* d=(uint64_t*)(data+i);
-		Tracer::I()->meet(*d);
-	}
-	uint8_t buf[64];
-	for(int counter=0; counter<4; counter++) {
-		uint8_t* seedIn;
-		int seedSize;
-		if(counter==0) {
-			seedSize=length;
-			seedIn=data;
-		}
-		else {
-			seedSize=64;
-			seedIn=buf;
-			memcpy(seedIn,Tracer::I()->fnvHistory,64);
-		}
-		switch(Tracer::I()->historyCksum()%11) {
-			case 0:
-			run_HeapSort(seedIn, seedSize);
-			break;
-			case 1:
-			run_QuickSort(seedIn, seedSize);
-			break;
-			case 2:
-			run_MergeSort(seedIn, seedSize); 
-			break;
-			case 3:
-			run_PrioQueue(seedIn, seedSize);
-			break;
-			case 4:
-			run_FibonacciHeap(seedIn, seedSize);
-			break;
-			case 5:
-			run_Kruskal(seedIn, seedSize);
-			break;
-			case 6:
-			run_BinarySearch(seedIn, seedSize);
-			break;
-			case 7:
-			run_BloomFilter(seedIn, seedSize);
-			break;
-			case 8:
-			run_SuffixArray(seedIn, seedSize);
-			break;
-			case 9:
-			run_BinarySearchTree(seedIn, seedSize);
-			break;
-			default:
-			run_RedBlackTree(seedIn, seedSize);
-			break;
-		}
-	}
-	Tracer::I()->final_result(hash);
-}
+} // end of extern "C"
 
 #ifdef TOP_TESTER
 int main() {
@@ -168,7 +172,7 @@ int main() {
 int main() {
 	const uint64_t MAX = uint64_t(-1);
 	uint64_t difficulty = MAX/20;
-	int64_t nonce = cpu_roaster_pow(0, 1, 2, 3, 4, 5, 6, 7, difficulty);
+	int64_t nonce = cpu_roaster_pow(0, 1, 2, 3, 4, 5, 6, 7, difficulty, 0, 1000);
 	printf("nonce: %016llx difficulty: %016llx\n", nonce, difficulty);
 	return 0;
 }
