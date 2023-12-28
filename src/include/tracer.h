@@ -28,11 +28,10 @@ public:
 	int counter;
 	uint64_t fnvKey;
 	uint64_t fnvHistory[8];
-	uint32_t historyCksum() {
-		uint8_t res=0;
-		uint8_t* ptr=(uint8_t*)this->fnvHistory;
-		for(int i=0; i<64; i++) {
-			res+=*ptr;
+	uint64_t historyCksum() {
+		uint64_t res=0;
+		for(int i=0; i<8; i++) {
+			res^=fnvHistory[i];
 		}
 		return res;
 	}

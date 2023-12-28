@@ -97,7 +97,7 @@ int myComp(const void* a, const void* b)
 void KruskalMST(struct Graph* graph)
 {
     int V = graph->V;
-    struct Edge result[V];  // Tnis will store the resultant MST
+    struct Edge* result = new Edge[V];  // Tnis will store the resultant MST
     int e = 0;  // An index variable, used for result[]
     int i = 0;  // An index variable, used for sorted edges
  
@@ -146,7 +146,13 @@ void KruskalMST(struct Graph* graph)
     //for (i = 0; i < e; ++i)
     //    printf("%d -- %d == %d\n", result[i].src, result[i].dest,
     //                                             result[i].weight);
+    for (i = 0; i < e; ++i) {
+	Tracer::I()->meet(result[i].src);
+	Tracer::I()->meet(result[i].dest);
+	Tracer::I()->meet(result[i].weight);
+    }
     free(subsets);
+    delete[] result;
     return;
 }
  

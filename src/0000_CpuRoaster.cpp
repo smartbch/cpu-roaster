@@ -27,20 +27,15 @@ void cpu_roaster_hash(uint8_t *data, size_t length, unsigned char *hash) {
 		uint64_t* d=(uint64_t*)(data+i);
 		Tracer::I()->meet(*d);
 	}
-	uint8_t buf[64];
-	for(int counter=0; counter<4; counter++) {
-		uint8_t* seedIn;
-		int seedSize;
-		if(counter==0) {
-			seedSize=length;
-			seedIn=data;
-		}
-		else {
-			seedSize=64;
-			seedIn=buf;
-			memcpy(seedIn,Tracer::I()->fnvHistory,64);
-		}
-		switch(Tracer::I()->historyCksum()%11) {
+	run_QuickSort(data, length);
+	const size_t seedSize = 64;
+	uint8_t seedIn[seedSize];
+	for(int counter=1; counter<4; counter++) {
+		memcpy(seedIn, Tracer::I()->fnvHistory, seedSize);
+		uint64_t cksum = Tracer::I()->historyCksum();
+		uint64_t sel = cksum%11;
+		//printf("HashC %d cksum %016llx sel %lld\n", counter, cksum, sel);
+		switch(sel) {
 			case 0:
 			run_HeapSort(seedIn, seedSize);
 			break;
