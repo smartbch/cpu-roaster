@@ -74,7 +74,7 @@ void cpu_roaster_hash(uint8_t *data, size_t length, unsigned char *hash) {
 	Tracer::I()->final_result(hash);
 }
 
-int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t d6, uint32_t d7, const uint64_t difficulty, const int64_t nonce_start, const int64_t nonce_step) {
+int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint32_t d4, uint32_t d5, uint32_t d6, uint32_t d7, const uint64_t difficulty, const int64_t nonce_start, const int64_t nonce_stop, const int64_t nonce_step) {
 	uint8_t data[40];
 	data[0*4+0] = uint8_t(d0 >> 0);
 	data[0*4+1] = uint8_t(d0 >> 8);
@@ -110,7 +110,9 @@ int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint
 	data[7*4+3] = uint8_t(d7 >>24);
 
 	int64_t nonce=0, counter=0;
-	for(nonce = nonce_start; nonce < MAX_SAFE_INTEGER; nonce += nonce_step) {
+	assert(nonce_start >= MIN_SAFE_INTEGER);
+	assert(nonce_stop < MAX_SAFE_INTEGER);
+	for(nonce = nonce_start; nonce < nonce_stop; nonce += nonce_step) {
 		uint64_t n = static_cast<uint64_t>(nonce);
 		data[32] = uint8_t(n >>  0);
 		data[33] = uint8_t(n >>  8);
@@ -130,10 +132,10 @@ int64_t cpu_roaster_pow(uint32_t d0, uint32_t d1, uint32_t d2, uint32_t d3, uint
 		printf("counter %lld nonce: %016llx m: %016llx\n", counter++, nonce, m);
 #endif
 		if(m <= difficulty) {
-			break;
+			return nonce;
 		}
 	}
-	return nonce;
+	return MAX_SAFE_INTEGER;
 }
 
 } // end of extern "C"
