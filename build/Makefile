@@ -44,6 +44,9 @@ expandRand.o: ../src/ExpandRand/expandRand.cpp ../src/ExpandRand/blake2b-ref.c  
 cpu-roaster.o: expandRand.o 0000_CpuRoaster.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
 	$(CXX) -o cpu-roaster.o -c expandRand.o 0000_CpuRoaster.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
 
+libcpuroaster.a: expandRand.o 0000_CpuRoaster.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
+	ar rs libcpuroaster.a expandRand.o 0000_CpuRoaster.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
+
 top_tester: ../src/0000_CpuRoaster.cpp expandRand.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
 	g++ -DTOP_TESTER -O3 -std=c++11 -o top_tester ../src/0000_CpuRoaster.cpp expandRand.o 1100_HeapSort.o 1200_QuickSort.o 1300_MergeSort.o 1400_PrioQueue.o 1600_FibonacciHeap.o 1900_KruskalMST.o 2300_BinarySearch.o 2800_BloomFilter.o 2900_SuffixArray.o 3200_BinarySearchTree.o 3800_RedBlackTree.o
 
